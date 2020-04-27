@@ -1379,8 +1379,8 @@ var mapView = function () {
     $('.map').show();
     $('#map').sdgMap({
       indicatorId: indicatorId,
-      mapOptions: {"tileURL":"https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}","tileOptions":{"id":"mapbox.light","accessToken":"pk.eyJ1IjoibW5sZ2FyYmUiLCJhIjoiY2s5NzdraHFkMGEyZzNlbWpvdTZna2s2YSJ9.fDUM6pveGSoESyPSoxN5Hw","attribution":"<a href=\"https://www.mapbox.com\">Mapbox</a> | <a href=\"http://geoportal.statistics.gov.uk/\">ONS</a>"},"minZoom":8},
-      mapLayers: [{"min_zoom":8,"max_zoom":12,"serviceUrl":"https://github.com/ods-lab/ods-data-madrid/raw/develop/map/barrios.geojson","nameProperty":"DESBDT","idProperty":"079046","staticBorders":true}],
+      mapOptions: {"tileURL":"https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}","tileOptions":{"id":"mapbox.light","accessToken":"pk.eyJ1IjoibW5sZ2FyYmUiLCJhIjoiY2s5NzdraHFkMGEyZzNlbWpvdTZna2s2YSJ9.fDUM6pveGSoESyPSoxN5Hw","attribution":"<a href=\"https://www.mapbox.com\">Mapbox</a> | <a href=\"http://geoportal.statistics.gov.uk/\">ONS</a>"},"minZoom":8,"maxZoom":18},
+      mapLayers: [{"min_zoom":8,"max_zoom":17,"label":"Barrio"}],
     });
   };
 };
@@ -1424,8 +1424,8 @@ var indicatorView = function (model, options) {
 
     // Provide the hide/show functionality for the sidebar.
     $('.data-view .nav-link').on('click', function(e) {
-      var $sidebar = $('#indicator-sidebar'),
-          $main = $('#indicator-main'),
+      var $sidebar = $('.indicator-sidebar'),
+          $main = $('.indicator-main'),
           hideSidebar = $(this).data('no-disagg'),
           mobile = window.matchMedia("screen and (max-width: 990px)");
       if (hideSidebar) {
