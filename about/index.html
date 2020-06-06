@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
-        <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=Promise%2CArray.prototype.forEach%2CString.prototype.includes%2CURLSearchParams%2CCustomEvent"></script>
+        <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=Promise%2CArray.prototype.forEach%2CString.prototype.includes%2CURLSearchParams%2CCustomEvent%2CArray.prototype.includes%2CArray.prototype.filter%2CArray.prototype.some%2CArray.prototype.find%2CObject.assign%2CArray.isArray"></script>
 <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/javascript-canvas-to-blob/3.15.0/js/canvas-to-blob.min.js"></script>
 
         <script>
@@ -120,7 +120,7 @@ var translations = {
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" crossorigin="">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20200428000731">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20200606232418">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet" crossorigin="">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
@@ -223,11 +223,11 @@ var translations = {
 <div id="main-content" class="container" role="main">
     <div>
         <h1>About</h1>
-        <p>Esta web es sobre This website is for disseminating SDG indicator data. We are at an Alpha stage in development, so the site is still ‘work in progress’.</p>
+        <p>Esta web nace con el proposito de difundir y localizar los indicadores ODS para la ciudad de Madrid. Es un proyecto creado por el grupo de trabajo ODSLab enmarcado dentro de las iniciativas de Medialab Prado . Para tener mas informacion sobre este grupo de trabajo puede hacerse a traves de la web <a href="http://ods-lab.org">ods-lab.org</a>.</p>
 
-<p>Other countries wishing to reuse this site’s underlying platform are welcome to do so for free. Our <a href="/guidance/">Guidance page</a> highlights key information on how to do this, linking to detailed technical instructions available in the platform’s <a href="https://open-sdg.readthedocs.io">documentation</a>. The <a href="http://www.opendataenterprise.org/">Center for Open Data Enterprise (CODE)</a> can also provide guidance and support through their <a href="https://www.sdgreporting.org/">SDG National Reporting Initiative</a>.</p>
+<p>Otras ciudades que deseen utilizar la plataforma de este sitio pueden hacerlo de forma gratuita a través del proyecto Open-SDG<a href="https://open-sdg.readthedocs.io">documentation</a>.</p>
 
-<p>If you have any feedback on this website or SDG data then please contact us at <a href="mailto:contact@ods-lab.org">contact@ods-lab.org</a>. The answers to some frequently asked questions are also available in our <a href="/faq/">FAQ</a>.</p>
+<p>Si tiene cualquier comentario sobre este sitio web o los datos ODS, contactenos a  <a href="mailto:contact@ods-lab.org">contact@ods-lab.org</a>. Las respuestas de algunas preguntas frecuentes se encuentran tambien disponibles en nuestro <a href="/faq/">FAQ</a>.</p>
 
     </div>
 </div>
@@ -290,61 +290,64 @@ var translations = {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.3/dist/html2canvas.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
-<script src='/assets/js/sdg.js?v=20200428000731'></script><script>
+<script src='/assets/js/sdg.js?v=20200606232418'></script><script>
 $(function() {
     if($('#indicatorData').length) {
       var domData = $('#indicatorData').data();
 
-      $('.async-loading').each(function(i, obj) {
-          $(obj).append($('<img />').attr('src', $(obj).data('img')));
-      });
+      if (domData.showdata) {
 
-      var remoteUrl = '/comb/' + domData.id + '.json';
-      if (opensdg.remoteDataBaseUrl !== '/') {
-        remoteUrl = opensdg.remoteDataBaseUrl + remoteUrl;
-      }
+        $('.async-loading').each(function(i, obj) {
+            $(obj).append($('<img />').attr('src', $(obj).data('img')));
+        });
 
-      $.ajax({
-        url: remoteUrl,
-        success: function(res) {
-
-          $('.async-loading').remove();
-          $('.async-loaded').show();
-
-          var model = new indicatorModel({
-            data: res.data,
-            edgesData: res.edges,
-            showMap: domData.showmap,
-            country: domData.country,
-            indicatorId: domData.indicatorid,
-            shortIndicatorId: domData.id,
-            chartTitle: domData.charttitle,
-            chartTitles: domData.charttitles,
-            measurementUnit: domData.measurementunit,
-            copyright: domData.copyright,
-            dataSource: domData.datasource,
-            geographicalArea: domData.geographicalarea,
-            showData: domData.showdata,
-            footnote: domData.footnote,
-            graphType: domData.graphtype,
-            startValues: domData.startvalues,
-            graphLimits: domData.graphlimits,
-            stackedDisaggregation: domData.stackeddisaggregation,
-          }),
-          view  = new indicatorView(model, {
-            rootElement: '#indicatorData',
-            legendElement: '#plotLegend',
-            maxChartHeight: 420,
-            tableColumnDefs: [
-              { maxCharCount: 25 }, // nowrap
-              { maxCharCount: 35, width: 200 },
-              { maxCharCount: Infinity, width: 250 }
-            ]
-          }),
-          controller = new indicatorController(model, view);
-          controller.initialise();
+        var remoteUrl = '/comb/' + domData.id + '.json';
+        if (opensdg.remoteDataBaseUrl !== '/') {
+          remoteUrl = opensdg.remoteDataBaseUrl + remoteUrl;
         }
-      });
+
+        $.ajax({
+          url: remoteUrl,
+          success: function(res) {
+
+            $('.async-loading').remove();
+            $('.async-loaded').show();
+
+            var model = new indicatorModel({
+              data: res.data,
+              edgesData: res.edges,
+              showMap: domData.showmap,
+              country: domData.country,
+              indicatorId: domData.indicatorid,
+              shortIndicatorId: domData.id,
+              chartTitle: domData.charttitle,
+              chartTitles: domData.charttitles,
+              measurementUnit: domData.measurementunit,
+              copyright: domData.copyright,
+              dataSource: domData.datasource,
+              geographicalArea: domData.geographicalarea,
+              showData: domData.showdata,
+              footnote: domData.footnote,
+              graphType: domData.graphtype,
+              startValues: domData.startvalues,
+              graphLimits: domData.graphlimits,
+              stackedDisaggregation: domData.stackeddisaggregation,
+            }),
+            view  = new indicatorView(model, {
+              rootElement: '#indicatorData',
+              legendElement: '#plotLegend',
+              maxChartHeight: 420,
+              tableColumnDefs: [
+                { maxCharCount: 25 }, // nowrap
+                { maxCharCount: 35, width: 200 },
+                { maxCharCount: Infinity, width: 250 }
+              ]
+            }),
+            controller = new indicatorController(model, view);
+            controller.initialise();
+          }
+        });
+      }
     }
 
     var switcher = new accessibilitySwitcher();
